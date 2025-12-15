@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Server - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #f1f5f9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 16px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .collections-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .collection-badge {
+            background: var(--code-bg);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .collection-badge .count {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 10px 0;
+        }
+
+        .endpoint-list {
+            list-style: none;
+        }
+
+        .endpoint-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+        }
+
+        .endpoint-list li:last-child {
+            border-bottom: none;
+        }
+
+        .method {
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.get { background: #dbeafe; color: #1e40af; }
+        .method.post { background: #d1fae5; color: #065f46; }
+        .method.put { background: #fef3c7; color: #92400e; }
+        .method.patch { background: #e0e7ff; color: #3730a3; }
+        .method.delete { background: #fee2e2; color: #991b1b; }
+
+        .guide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .guide h2 {
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+
+        .guide-steps {
+            display: grid;
+            gap: 16px;
+        }
+
+        .guide-step {
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-step h3 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .guide-step p {
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-light);
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--code-bg);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Test API Server Dashboard</h1>
+            <p class="subtitle">Dynamic API testing server for frontend developers - No authentication required</p>
+        </header>
+
+        <!-- Quick Start Guide -->
+        <div class="guide">
+            <h2>📖 How It Works - Super Simple!</h2>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <h3>1️⃣ Collections Auto-Create</h3>
+                    <p><strong>No "Create Collection" button needed!</strong> Simply go to the "➕ Create Data" tab, enter a collection name (like "posts" or "users"), add your JSON data, and click Create. The collection is created automatically!</p>
+                </div>
+                <div class="guide-step">
+                    <h3>2️⃣ Use Templates or Custom JSON</h3>
+                    <p>Choose from 5 ready-made templates (Blog Post, User, Product, Task, Comment) or write your own JSON structure. Any valid JSON works!</p>
+                </div>
+                <div class="guide-step">
+                    <h3>3️⃣ Access Your API Instantly</h3>
+                    <p>Once created, your collection appears in the Dashboard tab. Use the endpoints to GET, POST, PUT, PATCH, or DELETE your data from your frontend app!</p>
+                </div>
+                <div class="guide-step">
+                    <h3>4️⃣ Advanced Queries Available</h3>
+                    <p>Filter, sort, paginate, and search: ?_limit=10, ?_sort=-createdAt, ?status=active, ?price_gte=100</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="switchTab('create')">➕ Create Data</button>
+            <button class="tab" onclick="switchTab('endpoints')">📡 API Endpoints</button>
+            <button class="tab" onclick="switchTab('examples')">💡 Examples</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <div class="grid">
+                <div class="card">
+                    <h2><span class="icon">📚</span> Collections</h2>
+                    <div id="alert-collections" class="alert"></div>
+                    <div id="collections-container">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <p><strong>No collections yet!</strong></p>
+                            <p style="margin-top: 8px;">Collections are created automatically when you add your first document.</p>
+                            <button onclick="switchTab('create')" style="margin-top: 16px; background: var(--secondary);">
+                                ➕ Go to Create Data Tab
+                            </button>
+                        </div>
+                    </div>
+                    <button onclick="loadCollections()" class="btn-secondary" style="margin-top: 16px;">
+                        🔄 Refresh Collections
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">⚡</span> Quick Actions</h2>
+                    <div class="btn-group" style="flex-direction: column;">
+                        <button onclick="switchTab('create')" class="btn-secondary">➕ Create New Data</button>
+                        <button onclick="loadCollections()">🔄 Refresh All</button>
+                        <button onclick="window.open('/collections', '_blank')">📋 View Raw Collections API</button>
+                        <button onclick="showApiDocs()" class="btn-secondary">📖 API Documentation</button>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-collections">0</div>
+                            <div class="stat-label">Collections</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">∞</div>
+                            <div class="stat-label">Flexibility</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Tab -->
+        <div id="create-tab" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h2><span class="icon">➕</span> Create New Document (Auto-Creates Collection)</h2>
+                    <div style="background: #dbeafe; padding: 12px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #2563eb;">
+                        <strong>💡 How to create a collection:</strong> Enter a collection name below (e.g., "posts", "users", "products"). When you submit, the collection will be created automatically if it doesn't exist!
+                    </div>
+                    <div id="alert-create" class="alert"></div>
+                    
+                    <form onsubmit="createDocument(event)">
+                        <div class="form-group">
+                            <label>Collection Name * <span style="color: var(--secondary); font-weight: 600;">(Creates collection if new!)</span></label>
+                            <input 
+                                type="text" 
+                                id="collection-name" 
+                                placeholder="e.g., posts, users, products (will auto-create)" 
+                                pattern="[a-zA-Z0-9_-]+"
+                                required
+                            >
+                            <small style="color: var(--text-light); font-size: 0.85rem;">
+                                💡 Type any name - if it doesn't exist, it will be created automatically!
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>JSON Data *</label>
+                            <textarea 
+                                id="json-data" 
+                                placeholder='{"title": "My First Post", "content": "Hello World!", "author": "John"}'
+                                required
+                            ></textarea>
+                            <small style="color: var(--text-light); font-size: 0.85rem;">
+                                Enter valid JSON - any structure is accepted
+                            </small>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" style="font-size: 1.05rem; padding: 12px 24px;">🚀 Create Document & Collection</button>
+                            <button type="button" onclick="fillExample()">💡 Fill Example</button>
+                            <button type="button" onclick="clearForm()">🗑️ Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">📝</span> Quick Start Templates</h2>
+                    <p style="color: var(--text-light); margin-bottom: 16px;">🚀 Click any template to auto-fill the form and create your first collection:</p>
+                    
+                    <button onclick="useTemplate('post')" class="btn-secondary" style="width: 100%; margin-bottom: 8px;">
+                        📄 Blog Post
+                    </button>
+                    <button onclick="useTemplate('user')" class="btn-secondary" style="width: 100%; margin-bottom: 8px;">
+                        👤 User Profile
+                    </button>
+                    <button onclick="useTemplate('product')" class="btn-secondary" style="width: 100%; margin-bottom: 8px;">
+                        🛍️ Product
+                    </button>
+                    <button onclick="useTemplate('task')" class="btn-secondary" style="width: 100%; margin-bottom: 8px;">
+                        ✅ Task/Todo
+                    </button>
+                    <button onclick="useTemplate('comment')" class="btn-secondary" style="width: 100%;">
+                        💬 Comment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Endpoints Tab -->
+        <div id="endpoints-tab" class="tab-content">
+            <div class="card">
+                <h2><span class="icon">📡</span> Available API Endpoints</h2>
+                <p style="color: var(--text-light); margin-bottom: 20px;">
+                    Base URL: <code style="background: var(--code-bg); padding: 4px 8px; border-radius: 4px;" id="base-url"></code>
+                </p>
+
+                <ul class="endpoint-list">
+                    <li>
+                        <span class="method get">GET</span>
+                        <code>/collections</code>
+                        <span style="color: var(--text-light); margin-left: auto;">List all collections</span>
+                    </li>
+                    <li>
+                        <span class="method get">GET</span>
+                        <code>/:collection</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Get all documents</span>
+                    </li>
+                    <li>
+                        <span class="method get">GET</span>
+                        <code>/:collection/:id</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Get single document</span>
+                    </li>
+                    <li>
+                        <span class="method post">POST</span>
+                        <code>/:collection</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Create document</span>
+                    </li>
+                    <li>
+                        <span class="method put">PUT</span>
+                        <code>/:collection/:id</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Replace document</span>
+                    </li>
+                    <li>
+                        <span class="method patch">PATCH</span>
+                        <code>/:collection/:id</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Update document</span>
+                    </li>
+                    <li>
+                        <span class="method delete">DELETE</span>
+                        <code>/:collection/:id</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Delete document</span>
+                    </li>
+                    <li>
+                        <span class="method delete">DELETE</span>
+                        <code>/:collection</code>
+                        <span style="color: var(--text-light); margin-left: auto;">Delete all documents</span>
+                    </li>
+                </ul>
+
+                <h3 style="margin-top: 24px; margin-bottom: 12px;">Query Parameters</h3>
+                <div class="code-block">
+?_limit=10          // Limit results (max 1000)<br>
+?_skip=20           // Skip results (pagination)<br>
+?_sort=name         // Sort ascending<br>
+?_sort=-createdAt   // Sort descending<br>
+?_search=keyword    // Full-text search<br>
+?field=value        // Exact match filter<br>
+?field_gte=100      // Greater than or equal<br>
+?field_lte=500      // Less than or equal<br>
+?field_ne=draft     // Not equal
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples Tab -->
+        <div id="examples-tab" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h2><span class="icon">💡</span> cURL Examples</h2>
+                    
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Create a Post:</h3>
+                    <div class="code-block">
+<pre>curl -X POST <span id="curl-url-1"></span>/posts \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hello","content":"World"}'</pre>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Get All Posts:</h3>
+                    <div class="code-block">
+<pre>curl <span id="curl-url-2"></span>/posts</pre>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Filter & Sort:</h3>
+                    <div class="code-block">
+<pre>curl "<span id="curl-url-3"></span>/posts?status=published&_sort=-createdAt&_limit=10"</pre>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Update Post:</h3>
+                    <div class="code-block">
+<pre>curl -X PATCH <span id="curl-url-4"></span>/posts/ID \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Updated Title"}'</pre>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">🔧</span> JavaScript/Fetch Examples</h2>
+                    
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Create Document:</h3>
+                    <div class="code-block">
+<pre>const response = await fetch('<span id="js-url-1"></span>/posts', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    title: 'My Post',
+    content: 'Hello World'
+  })
+});
+const data = await response.json();</pre>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Get All Documents:</h3>
+                    <div class="code-block">
+<pre>const response = await fetch('<span id="js-url-2"></span>/posts');
+const data = await response.json();
+console.log(data.data); // Array of posts</pre>
+                    </div>
+
+                    <h3 style="margin-top: 20px; margin-bottom: 10px;">Search & Filter:</h3>
+                    <div class="code-block">
+<pre>const response = await fetch(
+  '<span id="js-url-3"></span>/posts?_search=javascript&_limit=5'
+);
+const data = await response.json();</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCollections();
+            updateBaseUrls();
+        });
+
+        function updateBaseUrls() {
+            document.getElementById('base-url').textContent = API_BASE;
+            ['curl-url-1', 'curl-url-2', 'curl-url-3', 'curl-url-4', 'js-url-1', 'js-url-2', 'js-url-3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = API_BASE;
+            });
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Load collections
+        async function loadCollections() {
+            try {
+                const response = await fetch(`${API_BASE}/collections`);
+                const data = await response.json();
+                
+                const container = document.getElementById('collections-container');
+                document.getElementById('total-collections').textContent = data.count || 0;
+                
+                if (data.collections && data.collections.length > 0) {
+                    const collectionsHTML = '<div class="collections-list">' + 
+                        data.collections.map(col => `
+                            <div class="collection-badge">
+                                📁 ${col}
+                                <a href="${API_BASE}/${col}" target="_blank" style="color: var(--primary); text-decoration: none;">View →</a>
+                            </div>
+                        `).join('') +
+                        '</div>';
+                    container.innerHTML = collectionsHTML;
+                } else {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><p>No collections yet. Create your first one!</p></div>';
+                }
+                
+                showAlert('collections', 'Collections loaded successfully!', 'success');
+                setTimeout(() => hideAlert('collections'), 2000);
+            } catch (error) {
+                showAlert('collections', 'Error loading collections: ' + error.message, 'error');
+            }
+        }
+
+        // Create document
+        async function createDocument(event) {
+            event.preventDefault();
+            
+            const collection = document.getElementById('collection-name').value.trim();
+            const jsonData = document.getElementById('json-data').value.trim();
+            
+            try {
+                const data = JSON.parse(jsonData);
+                
+                const response = await fetch(`${API_BASE}/${collection}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                showAlert('create', `✅ Document created successfully! ID: ${result._id}`, 'success');
+                clearForm();
+                loadCollections();
+                
+                // Show the created document
+                setTimeout(() => {
+                    if (confirm('Document created! Would you like to view it?')) {
+                        window.open(`${API_BASE}/${collection}/${result._id}`, '_blank');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                if (error instanceof SyntaxError) {
+                    showAlert('create', '❌ Invalid JSON format. Please check your syntax.', 'error');
+                } else {
+                    showAlert('create', '❌ Error: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // Templates
+        function useTemplate(type) {
+            const templates = {
+                post: {
+                    collection: 'posts',
+                    data: {
+                        title: 'My First Blog Post',
+                        content: 'This is the content of my blog post. It can be as long as you want!',
+                        author: 'John Doe',
+                        status: 'published',
+                        tags: ['javascript', 'tutorial']
+                    }
+                },
+                user: {
+                    collection: 'users',
+                    data: {
+                        name: 'Jane Smith',
+                        email: 'jane@example.com',
+                        age: 28,
+                        role: 'developer',
+                        active: true
+                    }
+                },
+                product: {
+                    collection: 'products',
+                    data: {
+                        name: 'Wireless Headphones',
+                        price: 99.99,
+                        category: 'Electronics',
+                        inStock: true,
+                        rating: 4.5
+                    }
+                },
+                task: {
+                    collection: 'tasks',
+                    data: {
+                        title: 'Complete project documentation',
+                        description: 'Write comprehensive docs for the API',
+                        status: 'pending',
+                        priority: 'high',
+                        dueDate: '2025-12-31'
+                    }
+                },
+                comment: {
+                    collection: 'comments',
+                    data: {
+                        postId: '507f1f77bcf86cd799439011',
+                        text: 'Great article! Very helpful.',
+                        author: 'Anonymous',
+                        likes: 5
+                    }
+                }
+            };
+            
+            const template = templates[type];
+            document.getElementById('collection-name').value = template.collection;
+            document.getElementById('json-data').value = JSON.stringify(template.data, null, 2);
+            switchTab('create');
+        }
+
+        function fillExample() {
+            useTemplate('post');
+        }
+
+        function clearForm() {
+            document.getElementById('collection-name').value = '';
+            document.getElementById('json-data').value = '';
+        }
+
+        // Alerts
+        function showAlert(section, message, type) {
+            const alert = document.getElementById(`alert-${section}`);
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+        }
+
+        function hideAlert(section) {
+            const alert = document.getElementById(`alert-${section}`);
+            alert.classList.remove('show');
+        }
+
+        function showApiDocs() {
+            window.open('/', '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -46,20 +46,20 @@ app.use(hpp());
 // Compress responses
 app.use(compression());
 
-// Global rate limiting - 100 requests per 15 minutes per IP
+// Global rate limiting - 500 requests per 15 minutes per IP
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 500,
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use(globalLimiter);
 
-// Stricter rate limiting for write operations - 30 requests per 15 minutes
+// Stricter rate limiting for write operations - 100 requests per 15 minutes
 const writeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30,
+  max: 100,
   message: "Too many write operations from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,

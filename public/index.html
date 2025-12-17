@@ -532,6 +532,228 @@
                 opacity: 1;
             }
         }
+
+        /* Custom Modal Styles */
+        .custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-modal.show {
+            display: flex;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-container {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+
+        .modal-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .modal-title {
+            flex: 1;
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--code-bg);
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-body p {
+            margin: 0;
+            line-height: 1.6;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .modal-footer {
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            background: var(--bg);
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 80px;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .modal-btn-secondary {
+            background: var(--code-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .modal-btn-success {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .modal-btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .modal-btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .modal-btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Modal Icon Colors */
+        .modal-icon.success {
+            color: var(--secondary);
+            animation: successPulse 0.5s ease;
+        }
+
+        .modal-icon.error {
+            color: var(--danger);
+            animation: errorShake 0.5s ease;
+        }
+
+        .modal-icon.warning {
+            color: var(--warning);
+            animation: warningBounce 0.5s ease;
+        }
+
+        .modal-icon.info {
+            color: var(--primary);
+            animation: infoPulse 0.5s ease;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes warningBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes infoPulse {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
     </style>
 </head>
 <body>
@@ -541,6 +763,24 @@
             <div class="loader-spinner"></div>
             <h3 class="loading-text">Processing...</h3>
             <p class="loading-subtext">Please wait while we handle your request</p>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="custom-modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-icon" id="modal-icon">ℹ️</span>
+                <h3 class="modal-title" id="modal-title">Notification</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">This is a message</p>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="modal-btn modal-btn-primary" id="modal-btn-primary" onclick="closeModal()">OK</button>
+            </div>
         </div>
     </div>
 
@@ -853,6 +1093,112 @@ const data = await response.json();</pre>
             loadingScreen.classList.remove('show');
         }
 
+        // Custom Modal Functions
+        function showModal(options = {}) {
+            const {
+                title = 'Notification',
+                message = '',
+                icon = 'ℹ️',
+                type = 'info', // info, success, error, warning
+                buttons = [{ text: 'OK', type: 'primary', onClick: closeModal }]
+            } = options;
+
+            const modal = document.getElementById('custom-modal');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMessage = document.getElementById('modal-message');
+            const modalFooter = document.getElementById('modal-footer');
+
+            // Set icon and type
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            modalIcon.textContent = icon || icons[type];
+            modalIcon.className = `modal-icon ${type}`;
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = message;
+
+            // Create buttons
+            modalFooter.innerHTML = '';
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.textContent = btn.text;
+                button.className = `modal-btn modal-btn-${btn.type || 'primary'}`;
+                button.onclick = () => {
+                    if (btn.onClick) btn.onClick();
+                    if (btn.closeOnClick !== false) closeModal();
+                };
+                modalFooter.appendChild(button);
+            });
+
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('custom-modal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // Custom Alert Function
+        function customAlert(message, type = 'info', title = null) {
+            const titles = {
+                success: '✅ Success',
+                error: '❌ Error',
+                warning: '⚠️ Warning',
+                info: 'ℹ️ Information'
+            };
+
+            showModal({
+                title: title || titles[type],
+                message: message,
+                type: type,
+                buttons: [{ text: 'OK', type: 'primary' }]
+            });
+        }
+
+        // Custom Confirm Function
+        function customConfirm(message, title = 'Confirm', onConfirm, onCancel) {
+            return new Promise((resolve) => {
+                showModal({
+                    title: title,
+                    message: message,
+                    type: 'warning',
+                    icon: '❓',
+                    buttons: [
+                        { 
+                            text: 'Cancel', 
+                            type: 'secondary',
+                            onClick: () => {
+                                if (onCancel) onCancel();
+                                resolve(false);
+                            }
+                        },
+                        { 
+                            text: 'Confirm', 
+                            type: 'primary',
+                            onClick: () => {
+                                if (onConfirm) onConfirm();
+                                resolve(true);
+                            }
+                        }
+                    ]
+                });
+            });
+        }
+
+        // Escape key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadCollections();
@@ -932,15 +1278,18 @@ const data = await response.json();</pre>
                 }
                 
                 const result = await response.json();
-                showAlert('create', `✅ Document created successfully! ID: ${result._id}`, 'success');
                 clearForm();
                 loadCollections();
                 
-                // Show the created document
+                // Show the created document with custom confirm dialog
                 setTimeout(() => {
-                    if (confirm('Document created! Would you like to view it?')) {
-                        window.open(`${API_BASE}/${collection}/${result._id}`, '_blank');
-                    }
+                    customConfirm(
+                        `Document created successfully!<br><br><strong>ID:</strong> ${result._id}<br><br>Would you like to view it now?`,
+                        '✅ Success',
+                        () => {
+                            window.open(`${API_BASE}/${collection}/${result._id}`, '_blank');
+                        }
+                    );
                 }, 500);
                 
             } catch (error) {
@@ -1023,16 +1372,26 @@ const data = await response.json();</pre>
             document.getElementById('json-data').value = '';
         }
 
-        // Alerts
+        // Alerts - Updated to use custom modals
         function showAlert(section, message, type) {
+            // Still update inline alert for backwards compatibility
             const alert = document.getElementById(`alert-${section}`);
-            alert.textContent = message;
-            alert.className = `alert alert-${type} show`;
+            if (alert) {
+                alert.textContent = message;
+                alert.className = `alert alert-${type} show`;
+            }
+            
+            // Also show custom modal for important messages
+            if (type === 'error' || message.includes('successfully')) {
+                customAlert(message, type);
+            }
         }
 
         function hideAlert(section) {
             const alert = document.getElementById(`alert-${section}`);
-            alert.classList.remove('show');
+            if (alert) {
+                alert.classList.remove('show');
+            }
         }
 
         function showApiDocs() {

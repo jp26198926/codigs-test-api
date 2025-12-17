@@ -426,6 +426,15 @@ app.delete("/:collection", writeLimiter, async (req, res) => {
   }
 });
 
+// Get PayPal configuration
+app.get("/api/paypal-config", (req, res) => {
+  res.json({
+    email: process.env.PAYPAL_EMAIL || "",
+    currency: process.env.PAYPAL_CURRENCY || "USD",
+    buttonText: process.env.PAYPAL_BUTTON_TEXT || "Donate with PayPal",
+  });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: "Endpoint not found" });
@@ -448,10 +457,14 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
   console.log("SIGTERM signal received: closing HTTP server");
-  mongoose.connection.close(false, () => {
+  try {
+    await mongoose.connection.close();
     console.log("MongoDB connection closed");
     process.exit(0);
-  });
+  } catch (err) {
+    console.error("Error during shutdown:", err);
+    process.exit(1);
+  }
 });

@@ -16,8 +16,8 @@ A comprehensive, secure, and dynamic API testing server built with Node.js, Expr
 
 ## 🔒 Security Features
 
-- **Helmet.js**: Secure HTTP headers
-- **Rate Limiting**: 100 requests per 15 minutes (global), 30 requests per 15 minutes (write operations)
+- **Helmet.js**: Secure HTTP headers with Content Security Policy
+- **Rate Limiting**: 500 requests per 15 minutes (global), 100 requests per 15 minutes (write operations)
 - **Request Size Limits**: 10kb max payload size
 - **MongoDB Sanitization**: Protection against NoSQL injection attacks
 - **HPP Protection**: HTTP Parameter Pollution prevention
@@ -411,8 +411,8 @@ GET /posts?status_ne=draft
 
 ## 🛡️ Rate Limits
 
-- **Global**: 100 requests per 15 minutes per IP
-- **Write Operations** (POST, PUT, PATCH, DELETE): 30 requests per 15 minutes per IP
+- **Global**: 500 requests per 15 minutes per IP
+- **Write Operations** (POST, PUT, PATCH, DELETE): 100 requests per 15 minutes per IP
 
 ## ⚠️ Important Notes
 
@@ -421,6 +421,7 @@ GET /posts?status_ne=draft
 3. **Query Limit**: Maximum 1000 documents per request
 4. **Public API**: No authentication - anyone can read/write
 5. **Auto Timestamps**: All documents automatically get `createdAt` and `updatedAt` fields
+6. **Security**: CSP allows inline scripts for the dashboard UI functionality
 
 ## 🐛 Error Handling
 

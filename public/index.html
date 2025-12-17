@@ -424,9 +424,126 @@
             color: var(--text-light);
             margin-top: 4px;
         }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-screen.show {
+            display: flex;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        .loader-spinner::before,
+        .loader-spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .loader-spinner::before {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loader-spinner::after {
+            width: 80px;
+            height: 80px;
+            border: 4px solid transparent;
+            border-top-color: #fff;
+            border-right-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(102, 126, 234, 0.5),
+                             0 0 20px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(102, 126, 234, 0.8),
+                             0 0 30px rgba(102, 126, 234, 0.5),
+                             0 0 40px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        .loading-subtext {
+            font-size: 1rem;
+            opacity: 0.8;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loader-spinner"></div>
+            <h3 class="loading-text">Processing...</h3>
+            <p class="loading-subtext">Please wait while we handle your request</p>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <div class="header-content">
@@ -719,6 +836,23 @@ const data = await response.json();</pre>
     <script>
         const API_BASE = window.location.origin;
 
+        // Loading Screen Functions
+        function showLoading(text = 'Processing...', subtext = 'Please wait while we handle your request') {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingText = document.querySelector('.loading-text');
+            const loadingSubtext = document.querySelector('.loading-subtext');
+            
+            if (loadingText) loadingText.textContent = text;
+            if (loadingSubtext) loadingSubtext.textContent = subtext;
+            
+            loadingScreen.classList.add('show');
+        }
+
+        function hideLoading() {
+            const loadingScreen = document.getElementById('loading-screen');
+            loadingScreen.classList.remove('show');
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadCollections();
@@ -744,6 +878,7 @@ const data = await response.json();</pre>
 
         // Load collections
         async function loadCollections() {
+            showLoading('Loading Collections...', 'Fetching all available collections');
             try {
                 const response = await fetch(`${API_BASE}/collections`);
                 const data = await response.json();
@@ -769,6 +904,8 @@ const data = await response.json();</pre>
                 setTimeout(() => hideAlert('collections'), 2000);
             } catch (error) {
                 showAlert('collections', 'Error loading collections: ' + error.message, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -778,6 +915,8 @@ const data = await response.json();</pre>
             
             const collection = document.getElementById('collection-name').value.trim();
             const jsonData = document.getElementById('json-data').value.trim();
+            
+            showLoading('Creating Document...', `Adding new document to "${collection}" collection`);
             
             try {
                 const data = JSON.parse(jsonData);
@@ -810,6 +949,8 @@ const data = await response.json();</pre>
                 } else {
                     showAlert('create', '❌ Error: ' + error.message, 'error');
                 }
+            } finally {
+                hideLoading();
             }
         }
 

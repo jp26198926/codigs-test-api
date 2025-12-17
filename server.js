@@ -231,6 +231,16 @@ app.get("/collections", async (req, res) => {
   }
 });
 
+// Get PayPal configuration
+app.get("/api/paypal-config", (req, res) => {
+  res.json({
+    // email: process.env.PAYPAL_EMAIL || "",
+    // currency: process.env.PAYPAL_CURRENCY || "USD",
+    buttonText: process.env.PAYPAL_BUTTON_TEXT || "Donate with PayPal",
+    paymentUrl: process.env.PAYPAL_PAYMENT_URL || "",
+  });
+});
+
 // GET all documents from a collection
 app.get("/:collection", async (req, res) => {
   try {
@@ -424,15 +434,6 @@ app.delete("/:collection", writeLimiter, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
-
-// Get PayPal configuration
-app.get("/api/paypal-config", (req, res) => {
-  res.json({
-    email: process.env.PAYPAL_EMAIL || "",
-    currency: process.env.PAYPAL_CURRENCY || "USD",
-    buttonText: process.env.PAYPAL_BUTTON_TEXT || "Donate with PayPal",
-  });
 });
 
 // 404 handler

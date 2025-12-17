@@ -1404,14 +1404,13 @@ const data = await response.json();</pre>
                 const response = await fetch('/api/paypal-config');
                 const config = await response.json();
                 
-                if (config.email) {
+                if (config.paymentUrl) {
                     const donateBtn = document.getElementById('paypal-donate-btn');
                     const buttonText = document.getElementById('paypal-button-text');
                     
                     // Create PayPal donate URL
-                    const paypalUrl = `https://www.paypal.com/donate?business=${encodeURIComponent(config.email)}&currency_code=${config.currency}`;
                     
-                    donateBtn.href = paypalUrl;
+                    donateBtn.href = config.paymentUrl;
                     buttonText.textContent = config.buttonText;
                     donateBtn.style.display = 'inline-flex';
                 }
